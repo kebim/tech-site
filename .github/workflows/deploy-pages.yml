@@ -1,4 +1,4 @@
-name: Deploy Learn to GitHub Pages
+name: Deploy Tech to GitHub Pages
 
 on:
   push:
@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Configure GitHub Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Configure public site links
@@ -36,6 +39,19 @@ jobs:
           VITE_LEARN_SITE_URL=${{ vars.LEARN_SITE_URL }}
           VITE_TECH_SITE_URL=${{ vars.TECH_SITE_URL }}
           EOF
+      - name: Build Tech site
+        run: pnpm build
+      - name: Verify built Pages files
+        run: |
+          test -f dist/public/index.html
+          find dist/public -maxdepth 2 -type f | head -30
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist/public
+          retention-days: 1
+
   deploy:
     environment:
       name: github-pages
@@ -45,5 +61,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4          
-          
+        uses: actions/deploy-pages@v4
