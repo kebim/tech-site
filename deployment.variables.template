@@ -1,0 +1,3 @@
+VITE_SITE_MODE=tech
+VITE_LEARN_SITE_URL=https://learn.example.com
+VITE_TECH_SITE_URL=https://tech.example.com
