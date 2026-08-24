@@ -32,7 +32,7 @@ jobs:
       - name: Configure public site links
         run: |
           cat > .env.production.local << 'EOF'
-          VITE_SITE_MODE=learn
+          VITE_SITE_MODE=tech
           VITE_LEARN_SITE_URL=${{ vars.LEARN_SITE_URL }}
           VITE_TECH_SITE_URL=${{ vars.TECH_SITE_URL }}
           EOF
