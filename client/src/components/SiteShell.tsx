@@ -27,6 +27,8 @@ export function SiteShell({ active, children }: SiteShellProps) {
         <nav className="desktop-nav" aria-label="Primary navigation">
           <a href={siteHref("learn")} className={active === "learn" ? "nav-link active" : "nav-link"}>Learn</a>
           <a href={siteHref("tech")} className={active === "tech" ? "nav-link active" : "nav-link"}>Tech</a>
+          {active === "learn" ? <Link href="/notes" className="nav-link">Notes</Link> : <Link href="/news" className="nav-link">News</Link>}
+          {active === "tech" && <a href="#tool-lab" className="nav-link">Tools</a>}
           <Link href="/about" className="nav-link">About</Link>
           <a href="#field-notes" className="nav-link">Field notes</a>
         </nav>
@@ -41,6 +43,8 @@ export function SiteShell({ active, children }: SiteShellProps) {
         <nav className="mobile-nav" aria-label="Mobile navigation">
           <a href={siteHref("learn")} onClick={() => setMenuOpen(false)}>Learn roadmaps</a>
           <a href={siteHref("tech")} onClick={() => setMenuOpen(false)}>Tech toolbench</a>
+          {active === "learn" ? <Link href="/notes" onClick={() => setMenuOpen(false)}>Subject notes</Link> : <Link href="/news" onClick={() => setMenuOpen(false)}>Tech news</Link>}
+          {active === "tech" && <a href="#tool-lab" onClick={() => setMenuOpen(false)}>Browser tools</a>}
           <Link href="/about" onClick={() => setMenuOpen(false)}>About the site</Link>
           <a href="#field-notes" onClick={() => setMenuOpen(false)}>Field notes</a>
         </nav>
@@ -53,9 +57,9 @@ export function SiteShell({ active, children }: SiteShellProps) {
           <p className="footer-statement">A practical study companion for building technical confidence one useful action at a time.</p>
         </div>
         <div className="footer-meta">
-          <span>Editable content: <code>client/src/data/content.ts</code></span>
+          <span>Content sources: <code>content.ts</code>, <code>notes.ts</code>, <code>news.ts</code></span>
           <span>Routes: <code>/learn</code> and <code>/tech</code></span>
-          <span className="footer-links"><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/editorial">Editorial</Link></span>
+          <span className="footer-links"><Link href="/notes">Notes</Link><Link href="/news">News</Link><Link href="/about">About</Link><Link href="/contact">Contact</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/editorial">Editorial</Link></span>
         </div>
       </footer>
     </div>

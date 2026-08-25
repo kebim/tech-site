@@ -4,7 +4,7 @@
  */
 export const siteConfig = {
   publicEmail: "",
-  ownerName: "",
+  ownerName: "Mibek Pandey",
   policyUpdated: "August 2026",
 };
 

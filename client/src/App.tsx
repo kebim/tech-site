@@ -9,6 +9,8 @@ import Home from "./pages/Home";
 import LearnPage from "./pages/LearnPage";
 import TechPage from "./pages/TechPage";
 import InfoPage from "./pages/InfoPage";
+import NotesPage from "./pages/NotesPage";
+import NewsPage from "./pages/NewsPage";
 
 function Router() {
   return (
@@ -16,6 +18,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/learn" component={LearnPage} />
       <Route path="/tech" component={TechPage} />
+      <Route path="/notes" component={NotesPage} />
+      <Route path="/news" component={NewsPage} />
       <Route path="/about" component={InfoPage} />
       <Route path="/contact" component={InfoPage} />
       <Route path="/privacy" component={InfoPage} />

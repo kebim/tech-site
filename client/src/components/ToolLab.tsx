@@ -3,15 +3,17 @@
  * Each exercise is transparent about its limits and provides a bounded, educational action.
  */
 import { useMemo, useState } from "react";
-import { Atom, Binary, Braces, Check, Copy, Network, Play, RotateCcw } from "lucide-react";
+import { Atom, Binary, Braces, Check, Copy, Fingerprint, Link2, Network, Play, RotateCcw } from "lucide-react";
 
-type LabName = "logic" | "network" | "data" | "quantum";
+type LabName = "logic" | "network" | "data" | "quantum" | "hash" | "url";
 
 const labTabs: Array<{ id: LabName; label: string; note: string; icon: typeof Binary }> = [
   { id: "logic", label: "Logic bench", note: "Binary & gates", icon: Binary },
   { id: "network", label: "Network bench", note: "IPv4 subnetting", icon: Network },
   { id: "data", label: "Data bench", note: "JSON formatter", icon: Braces },
   { id: "quantum", label: "Quantum bench", note: "Probability sampler", icon: Atom },
+  { id: "hash", label: "Hash bench", note: "SHA-256 digest", icon: Fingerprint },
+  { id: "url", label: "URL bench", note: "Encode & decode", icon: Link2 },
 ];
 
 function ipv4ToNumber(value: string) {
@@ -44,6 +46,11 @@ export function ToolLab() {
   const [probability, setProbability] = useState(50);
   const [shots, setShots] = useState(128);
   const [quantumResult, setQuantumResult] = useState<{ zero: number; one: number } | null>(null);
+  const [hashText, setHashText] = useState("Learn before you deploy.");
+  const [hashResult, setHashResult] = useState("");
+  const [hashStatus, setHashStatus] = useState("Enter text, then create a local SHA-256 digest.");
+  const [urlText, setUrlText] = useState("https://example.com/search?q=linux notes&topic=networking");
+  const [urlStatus, setUrlStatus] = useState("Encode or decode URL text locally.");
   const [copied, setCopied] = useState(false);
 
   const binaryResult = useMemo(() => {
@@ -85,8 +92,23 @@ export function ToolLab() {
     setQuantumResult({ one, zero: shots - one });
   }
 
+  async function makeHash() {
+    if (!window.crypto?.subtle) { setHashStatus("Your browser does not support the Web Crypto API."); return; }
+    const data = new TextEncoder().encode(hashText);
+    const digest = await window.crypto.subtle.digest("SHA-256", data);
+    setHashResult(Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join(""));
+    setHashStatus("SHA-256 digest created locally. A hash is one-way; it does not encrypt the text.");
+  }
+
+  function transformUrl(decode = false) {
+    try {
+      setUrlText(decode ? decodeURIComponent(urlText) : encodeURIComponent(urlText));
+      setUrlStatus(decode ? "URL text decoded locally." : "URL text encoded locally.");
+    } catch { setUrlStatus("This text cannot be decoded as a complete URL-encoded value."); }
+  }
+
   async function copyResult() {
-    const text = activeLab === "logic" ? `${decimal}₁₀ = ${binaryResult}; ${gate}(${Number(gateA)}, ${Number(gateB)}) = ${gateResult}` : activeLab === "network" && "network" in subnet ? `${address}/${prefix}: ${subnet.network} / ${subnet.mask}` : activeLab === "data" ? jsonText : quantumResult ? `0: ${quantumResult.zero}, 1: ${quantumResult.one}` : "";
+    const text = activeLab === "logic" ? `${decimal}₁₀ = ${binaryResult}; ${gate}(${Number(gateA)}, ${Number(gateB)}) = ${gateResult}` : activeLab === "network" && "network" in subnet ? `${address}/${prefix}: ${subnet.network} / ${subnet.mask}` : activeLab === "data" ? jsonText : activeLab === "hash" ? hashResult : activeLab === "url" ? urlText : quantumResult ? `0: ${quantumResult.zero}, 1: ${quantumResult.one}` : "";
     if (!text) return;
     await navigator.clipboard?.writeText(text);
     setCopied(true);
@@ -116,6 +138,8 @@ export function ToolLab() {
           </div>}
           {activeLab === "data" && <div className="lab-panel json-panel" role="tabpanel"><textarea value={jsonText} onChange={(event) => setJsonText(event.target.value)} aria-label="JSON input" spellCheck="false" /><div className="json-actions"><button onClick={() => formatJson(false)} className="lime-button">Format JSON <Braces size={16} /></button><button onClick={() => formatJson(true)} className="outline-button">Compact</button><button onClick={() => setJsonText("")} className="text-reset"><RotateCcw size={14} /> Clear</button></div><p className={jsonStatus.startsWith("Fix") ? "lab-error" : "lab-status"}>{jsonStatus}</p></div>}
           {activeLab === "quantum" && <div className="lab-panel quantum-panel" role="tabpanel"><div className="probability-control"><label>Probability of measuring <b>|1⟩</b></label><input type="range" min="0" max="100" value={probability} onChange={(event) => setProbability(Number(event.target.value))} /><strong>{probability}%</strong></div><div className="shot-row"><label>Samples<select value={shots} onChange={(event) => setShots(Number(event.target.value))}><option value={32}>32 shots</option><option value={128}>128 shots</option><option value={512}>512 shots</option></select></label><button onClick={runQuantum} className="lime-button"><Play size={16} /> Simulate measurements</button></div>{quantumResult ? <div className="quantum-results"><div><span>|0⟩</span><strong>{quantumResult.zero}</strong><i style={{ width: `${(quantumResult.zero / shots) * 100}%` }} /></div><div><span>|1⟩</span><strong>{quantumResult.one}</strong><i style={{ width: `${(quantumResult.one / shots) * 100}%` }} /></div></div> : <p className="lab-status">This is a probability sampler for learning about repeated measurement—not a quantum computer connection.</p>}</div>}
+          {activeLab === "hash" && <div className="lab-panel json-panel" role="tabpanel"><textarea value={hashText} onChange={(event) => setHashText(event.target.value)} aria-label="Text to hash" spellCheck="false" /><div className="json-actions"><button onClick={makeHash} className="lime-button"><Fingerprint size={16} /> Create SHA-256</button><button onClick={() => { setHashText(""); setHashResult(""); }} className="text-reset"><RotateCcw size={14} /> Clear</button></div><p className="lab-status">{hashStatus}</p>{hashResult && <output className="hash-output">{hashResult}</output>}</div>}
+          {activeLab === "url" && <div className="lab-panel json-panel" role="tabpanel"><textarea value={urlText} onChange={(event) => setUrlText(event.target.value)} aria-label="URL text input" spellCheck="false" /><div className="json-actions"><button onClick={() => transformUrl(false)} className="lime-button"><Link2 size={16} /> Encode URL text</button><button onClick={() => transformUrl(true)} className="outline-button">Decode</button><button onClick={() => setUrlText("")} className="text-reset"><RotateCcw size={14} /> Clear</button></div><p className="lab-status">{urlStatus}</p></div>}
         </div>
       </div>
     </section>
