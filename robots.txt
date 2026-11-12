@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tech.mibekpandey.com.np/sitemap.xml
