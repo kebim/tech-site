@@ -10,7 +10,7 @@
                     the page to PAGES.
    ADD REFERENCES : add links to REFERENCES under a group name.
    ===================================================================== */
-const SITE={counter:"tech-mibekpandey-com-np",learn:"https://learn.mibekpandey.com.np",tech:"https://tech.mibekpandey.com.np"};
+const SITE={counter:"tech",counterUrl:"" /* paste your Cloudflare Worker URL here */,learn:"https://learn.mibekpandey.com.np",tech:"https://tech.mibekpandey.com.np"};
 const HOME={eyebrow:"Tech / tools for real work",title:"Pick a tool.<br><em>Check your work.</em><br>Keep the notes.",
  summary:"Browser-based calculators and simulators for Linux, networking, digital logic and operating systems. Nothing you type leaves your device.",
  footer:"Practical tools for building technical confidence one useful action at a time."};
@@ -133,6 +133,10 @@ o.innerHTML=`<p class="out">Gantt: ${g.map(x=>`[${x.s}] ${x.n} `).join("")}[${g[
 ["sa","sq","sp"].forEach(i=>$(i).addEventListener("input",sched));sched();
 }}
 ];
+TOOLS.push({id:"sim",group:"Digital logic",wide:true,title:"Logic simulator",desc:"Simulate basic, universal and other gates, build circuits from them, and watch SR, D, JK and T flip-flops with a live timing diagram.",html:LogicSim.html,init:LogicSim.init});
+TOOLS.splice(TOOLS.findIndex(t=>t.group==="Digital logic"),0,TOOLS.pop());
+TOOLS.push({id:"builder",group:"Digital logic",wide:true,title:"Build yourself",desc:"Drag and drop gates, switches and lamps onto a board, wire them together and test your own circuit.",html:CircuitBuilder.html,init:CircuitBuilder.init});
+TOOLS.splice(TOOLS.findIndex(t=>t.group==="Digital logic")+1,0,TOOLS.pop());
 TOOLS.push({id:"twos",group:"Number systems",title:"Two's complement visualizer",desc:"See a signed integer as N-bit two's complement, with the invert-and-add-1 steps.",
 html:`<div class="g"><div><label for="tv">Decimal value</label><input id="tv" value="-18" inputmode="numeric"></div><div><label for="tb">Bits</label><select id="tb"><option>4</option><option selected>8</option><option>16</option><option>32</option></select></div></div><p class="err" id="terr"></p><div id="tout"></div>`,
 init(){const f=()=>{const e=$("terr"),o=$("tout"),raw=$("tv").value.trim();e.textContent="";o.innerHTML="";if(!/^-?\d+$/.test(raw)){e.textContent="Enter a whole number, like -18 or 100.";return}
